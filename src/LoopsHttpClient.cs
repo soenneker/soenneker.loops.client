@@ -11,32 +11,37 @@ using Soenneker.Utils.HttpClientCache.Dtos;
 
 namespace Soenneker.Loops.Client;
 
-///<inheritdoc cref="ILoopsHttpClient"/>
+/// <inheritdoc cref="ILoopsHttpClient"/>
 public class LoopsHttpClient : ILoopsHttpClient
 {
     private readonly IHttpClientCache _httpClientCache;
+    private readonly IConfiguration _config;
 
-    private readonly HttpClientOptions _options;
+    private const string _prodBaseUrl = "https://app.loops.so/api/v1/";
 
     public LoopsHttpClient(IHttpClientCache httpClientCache, IConfiguration config)
     {
         _httpClientCache = httpClientCache;
-
-        var apiKey = config.GetValueStrict<string>("Loops:ApiKey");
-
-        _options = new HttpClientOptions
-        {
-            BaseAddress = "https://app.loops.so/api/v1/",
-            DefaultRequestHeaders = new Dictionary<string, string>
-            {
-                {"Authorization", $"Bearer {apiKey}"}
-            }
-        };
+        _config = config;
     }
 
     public ValueTask<HttpClient> Get(CancellationToken cancellationToken = default)
     {
-        return _httpClientCache.Get(nameof(LoopsHttpClient), _options, cancellationToken: cancellationToken);
+        return _httpClientCache.Get(nameof(LoopsHttpClient), () =>
+        {
+            var apiKey = _config.GetValueStrict<string>("Loops:ApiKey");
+
+            var options = new HttpClientOptions
+            {
+                BaseAddress = _prodBaseUrl,
+                DefaultRequestHeaders = new Dictionary<string, string>
+                {
+                    {"Authorization", $"Bearer {apiKey}"}
+                }
+            };
+
+            return options;
+        }, cancellationToken);
     }
 
     public void Dispose()
