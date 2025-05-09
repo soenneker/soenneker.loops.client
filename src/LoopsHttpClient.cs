@@ -4,10 +4,10 @@ using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
+using Soenneker.Dtos.HttpClientOptions;
 using Soenneker.Extensions.Configuration;
 using Soenneker.Loops.Client.Abstract;
 using Soenneker.Utils.HttpClientCache.Abstract;
-using Soenneker.Utils.HttpClientCache.Dtos;
 
 namespace Soenneker.Loops.Client;
 
