@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,12 +11,14 @@ using Soenneker.Utils.HttpClientCache.Abstract;
 namespace Soenneker.Loops.Client;
 
 /// <inheritdoc cref="ILoopsHttpClient"/>
-public class LoopsHttpClient : ILoopsHttpClient
+public sealed class LoopsHttpClient : ILoopsHttpClient
 {
     private readonly IHttpClientCache _httpClientCache;
     private readonly IConfiguration _config;
 
     private const string _prodBaseUrl = "https://app.loops.so/api/v1/";
+
+    private const string _clientId = nameof(LoopsHttpClient);
 
     public LoopsHttpClient(IHttpClientCache httpClientCache, IConfiguration config)
     {
@@ -27,7 +28,7 @@ public class LoopsHttpClient : ILoopsHttpClient
 
     public ValueTask<HttpClient> Get(CancellationToken cancellationToken = default)
     {
-        return _httpClientCache.Get(nameof(LoopsHttpClient), () =>
+        return _httpClientCache.Get(_clientId, () =>
         {
             var apiKey = _config.GetValueStrict<string>("Loops:ApiKey");
 
@@ -46,15 +47,11 @@ public class LoopsHttpClient : ILoopsHttpClient
 
     public void Dispose()
     {
-        GC.SuppressFinalize(this);
-
-        _httpClientCache.RemoveSync(nameof(LoopsHttpClient));
+        _httpClientCache.RemoveSync(_clientId);
     }
 
     public ValueTask DisposeAsync()
     {
-        GC.SuppressFinalize(this);
-
-        return _httpClientCache.Remove(nameof(LoopsHttpClient));
+        return _httpClientCache.Remove(_clientId);
     }
 }
