@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,7 +17,7 @@ public sealed class LoopsHttpClient : ILoopsHttpClient
     private readonly IHttpClientCache _httpClientCache;
     private readonly IConfiguration _config;
 
-    private const string _prodBaseUrl = "https://app.loops.so/api/v1/";
+    private static readonly Uri _prodBaseUrl = new("https://app.loops.so/api/v1/", UriKind.Absolute);
 
     private const string _clientId = nameof(LoopsHttpClient);
 
@@ -28,20 +29,19 @@ public sealed class LoopsHttpClient : ILoopsHttpClient
 
     public ValueTask<HttpClient> Get(CancellationToken cancellationToken = default)
     {
-        return _httpClientCache.Get(_clientId, () =>
+        // No closure: state passed explicitly + static lambda
+        return _httpClientCache.Get(_clientId, (config: _config, prodBaseUrl: _prodBaseUrl), static state =>
         {
-            var apiKey = _config.GetValueStrict<string>("Loops:ApiKey");
+            var apiKey = state.config.GetValueStrict<string>("Loops:ApiKey");
 
-            var options = new HttpClientOptions
+            return new HttpClientOptions
             {
-                BaseAddress = _prodBaseUrl,
+                BaseAddress = state.prodBaseUrl,
                 DefaultRequestHeaders = new Dictionary<string, string>
                 {
                     {"Authorization", $"Bearer {apiKey}"}
                 }
             };
-
-            return options;
         }, cancellationToken);
     }
 
