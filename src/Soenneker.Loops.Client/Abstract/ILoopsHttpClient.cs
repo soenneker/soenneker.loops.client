@@ -6,12 +6,12 @@ using System.Threading;
 namespace Soenneker.Loops.Client.Abstract;
 
 /// <summary>
-/// A .NET thread-safe singleton HttpClient for 
+/// Provides a cached HTTP client authenticated for the Loops API.
 /// </summary>
 public interface ILoopsHttpClient : IDisposable, IAsyncDisposable
 {
     /// <summary>
-    /// Gets the value.
+    /// Gets the authenticated Loops HTTP client.
     /// </summary>
     /// <param name="cancellationToken">The cancellation token.</param>
     /// <returns>A task containing the result of the operation.</returns>

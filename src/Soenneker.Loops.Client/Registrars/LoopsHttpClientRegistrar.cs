@@ -6,7 +6,7 @@ using Soenneker.Utils.HttpClientCache.Registrar;
 namespace Soenneker.Loops.Client.Registrars;
 
 /// <summary>
-/// A .NET thread-safe singleton HttpClient for Loops
+/// Registers the cached Loops HTTP client provider.
 /// </summary>
 public static class LoopsHttpClientRegistrar
 {

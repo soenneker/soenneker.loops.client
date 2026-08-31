@@ -11,7 +11,6 @@ using Soenneker.Utils.HttpClientCache.Abstract;
 
 namespace Soenneker.Loops.Client;
 
-/// <inheritdoc cref="ILoopsHttpClient"/>
 public sealed class LoopsHttpClient : ILoopsHttpClient
 {
     private readonly IHttpClientCache _httpClientCache;
@@ -19,7 +18,7 @@ public sealed class LoopsHttpClient : ILoopsHttpClient
 
     private static readonly Uri _prodBaseUrl = new("https://app.loops.so/api/v1/", UriKind.Absolute);
 
-    private const string _clientId = nameof(LoopsHttpClient);
+    private readonly string _clientId = $"{nameof(LoopsHttpClient)}:{Guid.NewGuid():N}";
 
     public LoopsHttpClient(IHttpClientCache httpClientCache, IConfiguration config)
     {
@@ -45,18 +44,11 @@ public sealed class LoopsHttpClient : ILoopsHttpClient
         }, cancellationToken);
     }
 
-    /// <summary>
-    /// Releases resources used by the current instance.
-    /// </summary>
     public void Dispose()
     {
         _httpClientCache.RemoveSync(_clientId);
     }
 
-    /// <summary>
-    /// Asynchronously releases resources used by the current instance.
-    /// </summary>
-    /// <returns>A task that represents the asynchronous operation.</returns>
     public ValueTask DisposeAsync()
     {
         return _httpClientCache.Remove(_clientId);
