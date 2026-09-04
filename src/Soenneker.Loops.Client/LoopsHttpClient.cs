@@ -11,6 +11,7 @@ using Soenneker.Utils.HttpClientCache.Abstract;
 
 namespace Soenneker.Loops.Client;
 
+/// <inheritdoc cref="ILoopsHttpClient" />
 public sealed class LoopsHttpClient : ILoopsHttpClient
 {
     private readonly IHttpClientCache _httpClientCache;
