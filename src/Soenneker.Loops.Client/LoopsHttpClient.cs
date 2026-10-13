@@ -32,7 +32,7 @@ public sealed class LoopsHttpClient : ILoopsHttpClient
         // No closure: state passed explicitly + static lambda
         return _httpClientCache.Get(_clientId, (config: _config, prodBaseUrl: _prodBaseUrl), static state =>
         {
-            var apiKey = state.config.GetValueStrict<string>("Loops:ApiKey");
+            var apiKey = state.config.GetStringStrict("Loops:ApiKey");
 
             return new HttpClientOptions
             {
